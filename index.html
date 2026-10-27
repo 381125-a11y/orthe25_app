@@ -3,656 +3,1184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>校園午餐訂餐系統</title>
+  <title>校園午餐訂餐系統 & Neon Breakout 街機娛樂</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Microsoft JhengHei", "Segoe UI", Roboto, sans-serif;
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+    
     body {
-      background-color: #5d50c6;
-      padding: 25px 15px;
-      color: #333;
-      display: flex;
-      justify-content: center;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
       min-height: 100vh;
+      color: #f8fafc;
     }
 
-    .main-wrapper {
-      max-width: 960px;
-      width: 100%;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-
-    /* 頂部標題 */
-    .header-title {
-      text-align: center;
-      color: #ffffff;
-      font-size: 1.6rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
     }
-
-    /* 雙欄主版面 */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    @media (max-width: 768px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* 通用卡片風格 */
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 18px 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: bold;
-      color: #4a3e9e;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* 今日菜單列表 */
-    .menu-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed #e2e8f0;
-      font-size: 0.95rem;
-    }
-
-    .menu-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .menu-price {
-      font-weight: bold;
-      color: #2b2b2b;
-    }
-
-    /* 表單輸入樣式 */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .input-label {
-      font-size: 0.85rem;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-      background-color: #fafafa;
-    }
-
-    .form-control:focus {
-      border-color: #5d50c6;
-      background-color: #fff;
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 11px;
-      background-color: #4a38d3;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .btn-primary:hover {
-      background-color: #3b2bb8;
-    }
-
-    /* 查詢區域橫向排版 */
-    .search-box {
-      display: flex;
-      gap: 8px;
-    }
-
-    .search-box .form-control {
-      flex: 1;
-    }
-
-    .btn-search {
-      padding: 0 18px;
-      background-color: #4a38d3;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    /* 統計報表表格 */
-    .report-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-
-    .report-table th, .report-table td {
-      padding: 8px 6px;
-      text-align: right;
-    }
-
-    .report-table th:first-child, .report-table td:first-child {
-      text-align: left;
-    }
-
-    .report-table th {
-      color: #666;
-      font-weight: normal;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    }
-
-    .report-table td {
-      color: #333;
-    }
-
-    /* 統計結果小黃卡 */
-    .summary-box {
-      background-color: #fcf8e3;
-      border-radius: 6px;
-      padding: 12px 15px;
-      margin-top: 14px;
-      font-size: 0.9rem;
-      color: #6c5300;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .summary-highlight {
-      font-weight: bold;
-      color: #3d2e9e;
-      font-size: 1rem;
-    }
-
-    /* 檔案備份 File I/O 按鈕 */
-    .file-io-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-green {
-      flex: 1;
-      padding: 10px;
-      background-color: #00b894;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background-color 0.2s;
-    }
-
-    .btn-green:hover {
-      background-color: #00a383;
-    }
-
-    .btn-small {
-      padding: 4px 10px;
-      font-size: 0.78rem;
-      background-color: #4a38d3;
-      color: white;
-      border: none;
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
       border-radius: 4px;
-      cursor: pointer;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.8);
     }
 
-    /* 即時明細記錄列表 */
-    .log-list {
-      max-height: 180px;
-      overflow-y: auto;
-      font-size: 0.88rem;
-      color: #888;
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .log-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #f0f0f0;
-      color: #333;
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .log-item-del {
-      color: #e74c3c;
-      cursor: pointer;
-      font-weight: bold;
-      padding: 0 4px;
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.15);
     }
 
-    .msg-alert {
-      font-size: 0.82rem;
-      color: #e74c3c;
-      margin-top: 4px;
-      min-height: 18px;
+    .tab-btn {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
+    #gameCanvas {
+      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+      touch-action: none;
+      box-shadow: 0 0 30px rgba(79, 70, 229, 0.25);
+    }
+
+    .glow-text-indigo {
+      text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    }
+
+    .glow-text-pink {
+      text-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+    }
+
+    .glow-text-cyan {
+      text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
     }
   </style>
 </head>
-<body>
+<body class="p-3 md:p-6 pb-12">
 
-<div class="main-wrapper">
-  <!-- 標題列 -->
-  <div class="header-title">
-    <span>🍱</span> 校園午餐訂餐系統
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- 頂部頁眉 & Tab 切換導覽列 -->
+    <header class="glass-panel rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid to-utensils">🍱</i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-400">
+            校園智慧訂餐系統
+          </h1>
+          <p class="text-xs text-slate-400">Campus Lunch Ordering & Entertainment Arcade</p>
+        </div>
+      </div>
+
+      <!-- Tab Buttons -->
+      <nav class="flex p-1.5 bg-slate-900/80 rounded-xl border border-slate-800 w-full md:w-auto">
+        <button id="tabNavOrder" onclick="switchTab('order')" class="tab-btn active flex-1 md:flex-none px-6 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>訂餐管理系統</span>
+        </button>
+        <button id="tabNavGame" onclick="switchTab('game')" class="tab-btn flex-1 md:flex-none px-6 py-2.5 rounded-lg font-bold text-sm text-slate-400 hover:text-white flex items-center justify-center gap-2">
+          <i class="fa-solid fa-gamepad text-pink-400"></i>
+          <span>等餐娛樂 (Neon Breakout)</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: 訂餐管理系統 -->
+    <!-- ========================================================= -->
+    <main id="orderTab" class="tab-content space-y-6">
+      
+      <!-- 雙欄卡片佈局 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左欄：菜單與訂餐登記 (lg:col-span-7) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Card 1: 今日供應菜單 -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
+              <h2 class="text-lg font-bold flex items-center gap-2 text-indigo-300">
+                <i class="fa-solid fa-store"></i> 今日點餐菜單
+              </h2>
+              <span class="text-xs bg-indigo-950/80 text-indigo-300 border border-indigo-800 px-3 py-1 rounded-full font-medium">5 項美味主餐</span>
+            </div>
+            
+            <div id="menuContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <!-- JS 動態生成菜單卡片 -->
+            </div>
+          </div>
+
+          <!-- Card 2: 新增訂餐登記卡片 -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
+              <h2 class="text-lg font-bold flex items-center gap-2 text-emerald-400">
+                <i class="fa-solid fa-pen-to-square"></i> 學生訂餐登記
+              </h2>
+              <span class="text-xs text-slate-400">選擇學生與餐點進行登記</span>
+            </div>
+
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1.5">學生座號 (1-45)</label>
+                  <div class="relative">
+                    <i class="fa-solid fa-hashtag absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="number" id="seatInput" min="1" max="45" required placeholder="例如：12"
+                      class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1.5">選擇餐點</label>
+                  <div class="relative">
+                    <i class="fa-solid fa-utensils absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <select id="mealSelect" required
+                      class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none">
+                      <!-- JS 動態填入 -->
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">客製化備註 (選填)</label>
+                <input type="text" id="noteInput" placeholder="例如：不加蔥、飯少、辣醬分開裝"
+                  class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+              </div>
+
+              <div id="orderAlert" class="hidden p-3 rounded-xl text-xs flex items-center gap-2"></div>
+
+              <button type="submit"
+                class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check"></i>
+                <span>確認送出訂餐登記</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- 右欄：查詢、統計、備份與明細 (lg:col-span-5) -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Card 3: 座號快速查詢 -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-base font-bold flex items-center gap-2 text-cyan-300">
+                <i class="fa-solid fa-magnifying-glass"></i> 依座號查詢訂餐
+              </h2>
+            </div>
+            
+            <div class="flex gap-2 mb-3">
+              <input type="number" id="searchSeatInput" min="1" max="45" placeholder="輸入座號 (例: 8)"
+                class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+              <button onclick="searchBySeat()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-medium text-sm transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-search"></i> 查詢
+              </button>
+            </div>
+
+            <div id="searchResultBox" class="hidden p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-sm">
+              <!-- JS 動態插入 -->
+            </div>
+          </div>
+
+          <!-- Card 4: 統計報表與數據卡 -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
+              <h2 class="text-base font-bold flex items-center gap-2 text-amber-300">
+                <i class="fa-solid fa-chart-pie"></i> 訂餐統計報表
+              </h2>
+              <button onclick="renderUI()" class="text-xs text-amber-400 hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-arrows-rotate"></i> 重整數據
+              </button>
+            </div>
+
+            <!-- 數據指標列 -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                <span class="text-xs text-slate-400 block mb-1">總訂餐人次</span>
+                <span id="statTotalOrders" class="text-2xl font-black text-indigo-400">0</span>
+                <span class="text-xs text-slate-500"> 人</span>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl text-center">
+                <span class="text-xs text-slate-400 block mb-1">總預算金額</span>
+                <span id="statTotalAmount" class="text-2xl font-black text-amber-400">$0</span>
+              </div>
+            </div>
+
+            <!-- 餐點數量分佈列表 -->
+            <div id="statsBreakdown" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <!-- JS 動態渲染 -->
+            </div>
+          </div>
+
+          <!-- Card 5: 資料備份 (JSON File I/O) -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <h2 class="text-base font-bold flex items-center gap-2 text-purple-300 mb-3">
+              <i class="fa-solid fa-database"></i> 系統資料備份 (JSON File I/O)
+            </h2>
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="exportJSON()" class="py-2.5 px-3 bg-purple-900/50 hover:bg-purple-800/60 border border-purple-700/50 text-purple-200 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-download"></i> 匯出 JSON 備份
+              </button>
+              <label class="py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-2 cursor-pointer text-center">
+                <i class="fa-solid fa-upload"></i> 匯入 JSON 檔案
+                <input type="file" id="jsonFileInput" accept=".json" onchange="importJSON(event)" class="hidden">
+              </label>
+            </div>
+          </div>
+
+          <!-- Card 6: 即時明細紀錄 -->
+          <div class="glass-panel rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-700/60 pb-3">
+              <h2 class="text-base font-bold flex items-center gap-2 text-rose-300">
+                <i class="fa-solid fa-list-check"></i> 即時明細紀錄
+              </h2>
+              <button onclick="clearAllOrders()" class="text-xs text-rose-400 hover:text-rose-300 hover:underline">
+                <i class="fa-solid fa-trash-can"></i> 清空紀錄
+              </button>
+            </div>
+
+            <div id="logList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+              <!-- JS 動態填入明細列表 -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: NEON BREAKOUT 打磚塊街機遊戲 -->
+    <!-- ========================================================= -->
+    <section id="gameTab" class="tab-content hidden space-y-4">
+      
+      <div class="glass-panel rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
+        
+        <!-- 頂部遊戲 HUD 資訊欄 -->
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-4 rounded-xl mb-4">
+          
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 text-xl">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <h3 class="font-black text-lg text-white tracking-wider glow-text-pink">NEON BREAKOUT</h3>
+              <p class="text-xs text-slate-400">街機霓虹打磚塊 · 等餐不無聊</p>
+            </div>
+          </div>
+
+          <!-- 遊戲數據儀表 -->
+          <div class="flex items-center gap-3 md:gap-6 flex-wrap">
+            <div class="text-center px-3 py-1 bg-slate-800/80 rounded-lg border border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider block">SCORE</span>
+              <span id="scoreVal" class="font-mono text-xl font-bold text-amber-400 glow-text-cyan">0</span>
+            </div>
+
+            <div class="text-center px-3 py-1 bg-slate-800/80 rounded-lg border border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider block">LIVES</span>
+              <div id="livesVal" class="text-rose-500 flex items-center justify-center gap-1 text-sm font-bold mt-1">
+                <i class="fa-solid fa-heart"></i><i class="fa-solid fa-heart"></i><i class="fa-solid fa-heart"></i>
+              </div>
+            </div>
+
+            <div class="text-center px-3 py-1 bg-slate-800/80 rounded-lg border border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider block">STAGE</span>
+              <span id="levelVal" class="font-mono text-xl font-bold text-emerald-400">1</span>
+            </div>
+
+            <div class="text-center px-3 py-1 bg-slate-800/80 rounded-lg border border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider block">HIGH SCORE</span>
+              <span id="highScoreVal" class="font-mono text-xl font-bold text-purple-400">0</span>
+            </div>
+          </div>
+
+          <!-- 遊戲按鈕區 -->
+          <div class="flex items-center gap-2">
+            <button onclick="togglePauseGame()" id="pauseBtn" class="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl text-sm transition-all">
+              <i class="fa-solid fa-pause"></i>
+            </button>
+            <button onclick="toggleMute()" id="soundBtn" class="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl text-sm transition-all">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button onclick="openHelpModal()" class="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-xl text-sm transition-all">
+              <i class="fa-solid fa-circle-question"></i>
+            </button>
+            <button onclick="restartGame()" class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-900/50 transition-all flex items-center gap-2">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>新遊戲</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Canvas 遊戲畫布與 Overlay overlays -->
+        <div class="relative w-full flex justify-center items-center">
+          <canvas id="gameCanvas" width="800" height="600" class="w-full max-w-[800px] rounded-2xl border-2 border-indigo-500/30"></canvas>
+
+          <!-- 開始/暫停/結束 覆蓋層 Overlay -->
+          <div id="gameOverlay" class="absolute inset-0 max-w-[800px] mx-auto rounded-2xl bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-10 transition-all">
+            <div id="overlayStartContent" class="space-y-4">
+              <div class="w-16 h-16 rounded-2xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center text-indigo-300 text-3xl mx-auto glow-text-indigo">
+                <i class="fa-solid fa-gamepad"></i>
+              </div>
+              <h2 class="text-3xl font-black tracking-wider text-white glow-text-indigo">NEON BREAKOUT</h2>
+              <p class="text-sm text-slate-300 max-w-md">擊碎所有霓虹磚塊，獲取強力道具掉落，體驗極致流暢的經典街機體驗！</p>
+              <button onclick="startGame()" class="px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white text-base font-black rounded-xl shadow-xl shadow-pink-900/50 transition-all transform hover:scale-105">
+                <i class="fa-solid fa-play mr-2"></i> 開始遊戲
+              </button>
+            </div>
+
+            <div id="overlayPauseContent" class="hidden space-y-4">
+              <h2 class="text-3xl font-black text-amber-400 glow-text-cyan">遊戲暫停中</h2>
+              <p class="text-sm text-slate-300">按下下方按鈕繼續遊玩</p>
+              <button onclick="togglePauseGame()" class="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all">
+                繼續遊戲
+              </button>
+            </div>
+
+            <div id="overlayGameOverContent" class="hidden space-y-4">
+              <h2 class="text-3xl font-black text-rose-500 glow-text-pink">GAME OVER</h2>
+              <p class="text-slate-300 text-sm">最終得分: <span id="finalScore" class="font-bold text-amber-400 text-lg">0</span></p>
+              <button onclick="startGame()" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl shadow-lg transition-all">
+                再次挑戰
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 遊戲操作說明與道具指南腳註 -->
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-400 bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="text-indigo-400 font-bold"><i class="fa-solid fa-keyboard"></i> 控制說明:</span>
+            <span>方向鍵 (←/→) 或 A/D 鍵，亦可使用滑鼠/觸控滑動底盤。</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400 font-bold"><i class="fa-solid fa-gift"></i> 道具掉落:</span>
+            <span><b class="text-blue-400">[W]</b>加寬底盤 | <b class="text-amber-400">[M]</b>多重球 | <b class="text-rose-400">[+]</b>增加生命</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-400 font-bold"><i class="fa-solid fa-trophy"></i> 關卡機制:</span>
+            <span>清除畫面上所有磚塊即可自動進入下一關卡，速度遞增！</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
   </div>
 
-  <div class="dashboard-grid">
-    <!-- 左欄區域 -->
-    <div class="column">
-      
-      <!-- 1. 今日菜單 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">今日菜單</div>
-        </div>
-        <div class="menu-list" id="menuListContainer"></div>
+  <!-- 遊戲說明彈窗 (Help Modal) -->
+  <div id="helpModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-700 shadow-2xl relative space-y-4">
+      <button onclick="closeHelpModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-circle-info text-indigo-400"></i> Neon Breakout 遊戲指南
+      </h3>
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <p>1. <b>移動擋板：</b> 滑鼠游標移動、鍵盤方向鍵或在觸控螢幕上左右拖曳。</p>
+        <p>2. <b>磚塊分數：</b> 越上方的紅色/橙色磚塊分數越高，反彈角度會影響球體飛行軌跡。</p>
+        <p>3. <b>Power-up 強化道具：</b></p>
+        <ul class="list-disc pl-5 space-y-1 text-slate-400">
+          <li><strong class="text-blue-400">[W] Width:</strong> 擴充底盤寬度，維持 10 秒。</li>
+          <li><strong class="text-amber-400">[M] Multi-Ball:</strong> 額外複製一顆彈珠。</li>
+          <li><strong class="text-rose-400">[+] Life:</strong> 增加 1 點剩餘生命。</li>
+        </ul>
       </div>
-
-      <!-- 2. 訂餐登記 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">訂餐登記</div>
-        </div>
-        <div class="form-group">
-          <div>
-            <div class="input-label">座號 (1 - 50，輸入 0 結算)</div>
-            <input type="number" id="seatInput" class="form-control" placeholder="輸入座號" min="0" max="50">
-          </div>
-          <div>
-            <div class="input-label">選擇餐點</div>
-            <select id="mealSelect" class="form-control">
-              <option value="">-- 請選擇餐點 --</option>
-            </select>
-          </div>
-          <button id="addOrderBtn" class="btn-primary">新增訂單</button>
-          <div id="inputMsg" class="msg-alert"></div>
-        </div>
-      </div>
-
-      <!-- 3. 依座號查詢訂單 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">依座號查詢訂單</div>
-        </div>
-        <div class="search-box">
-          <input type="number" id="searchSeatInput" class="form-control" placeholder="輸入座號查詢">
-          <button id="searchBtn" class="btn-search">查詢</button>
-        </div>
-        <div id="searchResultMsg" class="msg-alert" style="color: #4a38d3; margin-top: 8px;"></div>
-      </div>
-
-    </div>
-
-    <!-- 右欄區域 -->
-    <div class="column">
-      
-      <!-- 4. 統計報表 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">統計報表</div>
-          <button id="sortBtn" class="btn-small">📊 熱門排序</button>
-        </div>
-
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th style="text-align:left;">餐點名稱</th>
-              <th>單價</th>
-              <th>數量</th>
-              <th>小計</th>
-            </tr>
-          </thead>
-          <tbody id="reportTbody"></tbody>
-        </table>
-
-        <div class="summary-box">
-          <div>總訂餐筆數：<span id="totalCountEl">0</span> 筆</div>
-          <div>應繳總金額：<span id="totalAmountEl" class="summary-highlight">$ 0</span> 元</div>
-        </div>
-      </div>
-
-      <!-- 5. 檔案備份與讀取 (File I/O) -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">檔案備份與讀取 (File I/O)</div>
-        </div>
-        <div class="file-io-group">
-          <button id="exportJsonBtn" class="btn-green">💾 匯出JSON</button>
-          <button id="importJsonBtn" class="btn-green">📂 讀取檔案</button>
-          <input type="file" id="fileInput" accept=".json" style="display: none;">
-        </div>
-      </div>
-
-      <!-- 6. 即時登記明細紀錄 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">即時登記明細紀錄</div>
-        </div>
-        <div class="log-list" id="logList">
-          尚無登記紀錄
-        </div>
-      </div>
-
+      <button onclick="closeHelpModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition-all">
+        我瞭解了
+      </button>
     </div>
   </div>
-</div>
 
-<script>
-  // 1. 內建 5 項菜單資料
-  const MENU = [
-    { id: 1, name: "排骨便當", price: 80 },
-    { id: 2, name: "雞腿便當", price: 85 },
-    { id: 3, name: "素食便當", price: 70 },
-    { id: 4, name: "滷肉飯",   price: 55 },
-    { id: 5, name: "貢丸湯",   price: 20 }
-  ];
+  <script>
+    /* =========================================================
+       1. 訂餐系統邏輯 (Lunch Ordering System Core Logic)
+       ========================================================= */
 
-  // 全域狀態：訂單資料陣列 [{ id: timestamp, seat: 5, mealId: 1 }]
-  let orders = [];
-  let isSortedByPopularity = false;
+    // 內建菜單項目
+    const MENU = [
+      { id: 'M1', name: '日式照燒雞腿便當', price: 95, icon: '🍗', tag: '熱銷人氣' },
+      { id: 'M2', name: '台式香酥排骨飯', price: 90, icon: '🥩', tag: '經典招牌' },
+      { id: 'M3', name: '健康蔬食藜麥飯', price: 85, icon: '🥗', tag: '全素蛋奶' },
+      { id: 'M4', name: '韓式泡菜豬肉飯', price: 90, icon: '🍲', tag: '開胃微辣' },
+      { id: 'M5', name: '黃金咖哩牛肉飯', price: 100, icon: '🍛', tag: '濃郁推介' }
+    ];
 
-  // DOM 元素參考
-  const menuListContainer = document.getElementById('menuListContainer');
-  const mealSelect = document.getElementById('mealSelect');
-  const seatInput = document.getElementById('seatInput');
-  const addOrderBtn = document.getElementById('addOrderBtn');
-  const inputMsg = document.getElementById('inputMsg');
-  const reportTbody = document.getElementById('reportTbody');
-  const totalCountEl = document.getElementById('totalCountEl');
-  const totalAmountEl = document.getElementById('totalAmountEl');
-  const logList = document.getElementById('logList');
-  const sortBtn = document.getElementById('sortBtn');
-  const searchSeatInput = document.getElementById('searchSeatInput');
-  const searchBtn = document.getElementById('searchBtn');
-  const searchResultMsg = document.getElementById('searchResultMsg');
-  const exportJsonBtn = document.getElementById('exportJsonBtn');
-  const importJsonBtn = document.getElementById('importJsonBtn');
-  const fileInput = document.getElementById('fileInput');
+    // LocalStorage State
+    let orders = JSON.parse(localStorage.getItem('campus_lunch_orders')) || [
+      { seat: 5, mealId: 'M1', mealName: '日式照燒雞腿便當', price: 95, note: '飯少', timestamp: '10:15:20' },
+      { seat: 12, mealId: 'M2', mealName: '台式香酥排骨飯', price: 90, note: '', timestamp: '10:18:45' }
+    ];
 
-  // 初始化菜單 UI 與下拉選單
-  function initMenuUI() {
-    menuListContainer.innerHTML = '';
-    mealSelect.innerHTML = '<option value="">-- 請選擇餐點 --</option>';
-
-    MENU.forEach(item => {
-      // 渲染左側今日菜單
-      const itemEl = document.createElement('div');
-      itemEl.className = 'menu-item';
-      itemEl.innerHTML = `
-        <span>${item.id}. ${item.name}</span>
-        <span class="menu-price">$${item.price}</span>
-      `;
-      menuListContainer.appendChild(itemEl);
-
-      // 渲染下拉選單選項
-      const opt = document.createElement('option');
-      opt.value = item.id;
-      opt.textContent = `${item.id}. ${item.name} ($${item.price})`;
-      mealSelect.appendChild(opt);
-    });
-  }
-
-  // 畫面更新：重新計算與更新報表、歷史紀錄
-  function updateUI() {
-    renderReport();
-    renderLog();
-  }
-
-  // 渲染統計報表
-  function renderReport() {
-    let stats = MENU.map(item => {
-      const count = orders.filter(o => o.mealId === item.id).length;
-      return {
-        ...item,
-        count: count,
-        subtotal: count * item.price
-      };
-    });
-
-    if (isSortedByPopularity) {
-      stats.sort((a, b) => b.count - a.count);
+    function saveOrdersToStorage() {
+      localStorage.setItem('campus_lunch_orders', JSON.stringify(orders));
     }
 
-    const totalCount = orders.length;
-    const totalAmount = stats.reduce((sum, item) => sum + item.subtotal, 0);
+    // 初始化菜單 UI 與 Select 下拉選項
+    function initMenuUI() {
+      const menuContainer = document.getElementById('menuContainer');
+      const mealSelect = document.getElementById('mealSelect');
 
-    reportTbody.innerHTML = '';
-    stats.forEach(item => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="text-align:left;">${item.name}</td>
-        <td>$${item.price}</td>
-        <td>${item.count}</td>
-        <td>$${item.subtotal}</td>
-      `;
-      reportTbody.appendChild(tr);
-    });
+      menuContainer.innerHTML = '';
+      mealSelect.innerHTML = '<option value="" disabled selected>-- 請選擇餐點 --</option>';
 
-    totalCountEl.textContent = totalCount;
-    totalAmountEl.textContent = `$ ${totalAmount}`;
-  }
+      MENU.forEach(item => {
+        // 卡片渲染
+        const card = document.createElement('div');
+        card.className = 'glass-card p-3.5 rounded-xl flex items-center gap-3 border border-slate-800';
+        card.innerHTML = `
+          <div class="text-3xl p-2 bg-slate-800/80 rounded-xl border border-slate-700/50">${item.icon}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <h4 class="font-bold text-sm text-white truncate">${item.name}</h4>
+              <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">${item.tag}</span>
+            </div>
+            <p class="text-xs font-semibold text-amber-400 mt-1">$${item.price} NTD</p>
+          </div>
+        `;
+        menuContainer.appendChild(card);
 
-  // 渲染即時登記明細紀錄
-  function renderLog() {
-    if (orders.length === 0) {
-      logList.innerHTML = '尚無登記紀錄';
-      return;
+        // 下拉選單渲染
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = `${item.name} ($${item.price})`;
+        mealSelect.appendChild(opt);
+      });
     }
 
-    logList.innerHTML = '';
-    [...orders].reverse().forEach((ord) => {
-      const meal = MENU.find(m => m.id === ord.mealId);
-      const div = document.createElement('div');
-      div.className = 'log-item';
-      div.innerHTML = `
-        <span>座號 ${ord.seat} 號：${meal ? meal.name : '未知餐點'} ($${meal ? meal.price : 0})</span>
-        <span class="log-item-del" title="刪除此筆" onclick="deleteOrder(${ord.id})">✕</span>
-      `;
-      logList.appendChild(div);
-    });
-  }
+    // 提交訂餐
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+      const seat = parseInt(document.getElementById('seatInput').value);
+      const mealId = document.getElementById('mealSelect').value;
+      const note = document.getElementById('noteInput').value.trim();
+      const alertBox = document.getElementById('orderAlert');
 
-  // 刪除單筆紀錄
-  window.deleteOrder = function(orderId) {
-    orders = orders.filter(o => o.id !== orderId);
-    updateUI();
-  };
-
-  // 處理新增訂單 (含輸入驗證)
-  function handleAddOrder() {
-    inputMsg.textContent = '';
-    const seatVal = seatInput.value.trim();
-    const mealVal = mealSelect.value;
-
-    if (seatVal === '') {
-      inputMsg.style.color = '#e74c3c';
-      inputMsg.textContent = '⚠️ 請輸入座號！';
-      return;
-    }
-
-    const seat = parseInt(seatVal, 10);
-
-    // 檢查座號 0 結束
-    if (seat === 0) {
-      inputMsg.style.color = '#00b894';
-      inputMsg.textContent = '✅ 輸入 0：訂餐登記已結束，結算完成！';
-      seatInput.value = '';
-      mealSelect.value = '';
-      return;
-    } else {
-      inputMsg.style.color = '#e74c3c';
-    }
-
-    // 驗證座號 1~50
-    if (isNaN(seat) || seat < 1 || seat > 50) {
-      inputMsg.textContent = '❌ 座號不合法！請輸入 1 ~ 50 的數字。';
-      return;
-    }
-
-    // 驗證餐點選擇
-    if (!mealVal) {
-      inputMsg.textContent = '❌ 請選擇有效的餐點！';
-      return;
-    }
-
-    const mealId = parseInt(mealVal, 10);
-
-    orders.push({
-      id: Date.now() + Math.random(),
-      seat: seat,
-      mealId: mealId
-    });
-
-    seatInput.value = '';
-    mealSelect.value = '';
-    seatInput.focus();
-    updateUI();
-  }
-
-  // 依座號查詢功能
-  function handleSearch() {
-    searchResultMsg.textContent = '';
-    const searchSeat = parseInt(searchSeatInput.value, 10);
-
-    if (isNaN(searchSeat) || searchSeat < 1 || searchSeat > 50) {
-      searchResultMsg.style.color = '#e74c3c';
-      searchResultMsg.textContent = '請輸入合法的座號 (1~50)';
-      return;
-    }
-
-    const userOrders = orders.filter(o => o.seat === searchSeat);
-    if (userOrders.length === 0) {
-      searchResultMsg.style.color = '#e74c3c';
-      searchResultMsg.textContent = `座號 ${searchSeat} 號 目前無訂購紀錄。`;
-    } else {
-      searchResultMsg.style.color = '#4a38d3';
-      const orderNames = userOrders.map(o => {
-        const m = MENU.find(item => item.id === o.mealId);
-        return m ? m.name : '';
-      }).join('、');
-      searchResultMsg.textContent = `座號 ${searchSeat} 號 訂購：${orderNames}`;
-    }
-  }
-
-  // 熱門排序切換
-  sortBtn.addEventListener('click', () => {
-    isSortedByPopularity = !isSortedByPopularity;
-    sortBtn.textContent = isSortedByPopularity ? '🔄 預設排序' : '📊 熱門排序';
-    renderReport();
-  });
-
-  // 匯出 JSON 檔
-  exportJsonBtn.addEventListener('click', () => {
-    if (orders.length === 0) {
-      alert('目前尚無訂購資料可供匯出！');
-      return;
-    }
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(orders, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `lunch_orders_${new Date().toISOString().slice(0,10)}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  });
-
-  // 讀取 JSON 檔 (File I/O)
-  importJsonBtn.addEventListener('click', () => {
-    fileInput.click();
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      try {
-        const importedData = JSON.parse(evt.target.result);
-        if (Array.isArray(importedData)) {
-          orders = importedData;
-          updateUI();
-          alert('✅ 成功匯入訂單檔案！');
-        } else {
-          alert('❌ 檔案格式不符合需求！');
-        }
-      } catch (err) {
-        alert('❌ 讀取檔案失敗，請確定為合法的 JSON 格式。');
+      if (!seat || seat < 1 || seat > 45) {
+        showAlert('請輸入有效的學生座號 (1 - 45)', 'error');
+        return;
       }
+      if (!mealId) {
+        showAlert('請選擇欲訂購的餐點', 'error');
+        return;
+      }
+
+      const meal = MENU.find(m => m.id === mealId);
+      const existingIndex = orders.findIndex(o => o.seat === seat);
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+      const newOrder = {
+        seat,
+        mealId: meal.id,
+        mealName: meal.name,
+        price: meal.price,
+        note,
+        timestamp: timeStr
+      };
+
+      if (existingIndex !== -1) {
+        orders[existingIndex] = newOrder;
+        showAlert(`座號 ${seat} 號的訂餐紀錄已成功更新為「${meal.name}」！`, 'success');
+      } else {
+        orders.push(newOrder);
+        showAlert(`座號 ${seat} 號已成功登記訂餐「${meal.name}」！`, 'success');
+      }
+
+      saveOrdersToStorage();
+      renderUI();
+      document.getElementById('orderForm').reset();
+    }
+
+    function showAlert(msg, type) {
+      const alertBox = document.getElementById('orderAlert');
+      alertBox.classList.remove('hidden', 'bg-rose-950/80', 'text-rose-300', 'border-rose-800', 'bg-emerald-950/80', 'text-emerald-300', 'border-emerald-800');
+      
+      if (type === 'error') {
+        alertBox.classList.add('bg-rose-950/80', 'text-rose-300', 'border', 'border-rose-800');
+        alertBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}`;
+      } else {
+        alertBox.classList.add('bg-emerald-950/80', 'text-emerald-300', 'border', 'border-emerald-800');
+        alertBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
+      }
+
+      setTimeout(() => alertBox.classList.add('hidden'), 4000);
+    }
+
+    // 座號查詢
+    function searchBySeat() {
+      const seat = parseInt(document.getElementById('searchSeatInput').value);
+      const resultBox = document.getElementById('searchResultBox');
+
+      if (!seat) {
+        resultBox.classList.remove('hidden');
+        resultBox.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-circle-xmark"></i> 請先輸入欲查詢的座號！</span>`;
+        return;
+      }
+
+      const found = orders.find(o => o.seat === seat);
+      resultBox.classList.remove('hidden');
+
+      if (found) {
+        resultBox.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+            <span class="font-bold text-cyan-300">座號 ${found.seat} 號</span>
+            <span class="text-xs text-slate-400">${found.timestamp} 登記</span>
+          </div>
+          <p class="font-semibold text-white">${found.mealName} <span class="text-amber-400">($${found.price})</span></p>
+          ${found.note ? `<p class="text-xs text-slate-400 mt-1">備註: ${found.note}</p>` : ''}
+        `;
+      } else {
+        resultBox.innerHTML = `<span class="text-slate-400"><i class="fa-solid fa-info-circle"></i> 座號 ${seat} 號目前尚未進行訂餐登記。</span>`;
+      }
+    }
+
+    // 刪除單筆紀錄
+    function deleteOrder(seat) {
+      orders = orders.filter(o => o.seat !== seat);
+      saveOrdersToStorage();
+      renderUI();
+    }
+
+    // 清空所有紀錄
+    function clearAllOrders() {
+      if (confirm('確定要清空所有同學的訂餐登記紀錄嗎？')) {
+        orders = [];
+        saveOrdersToStorage();
+        renderUI();
+      }
+    }
+
+    // 渲染報表與明細紀錄
+    function renderUI() {
+      // 1. 總覽數據
+      const totalOrders = orders.length;
+      const totalAmount = orders.reduce((sum, o) => sum + o.price, 0);
+
+      document.getElementById('statTotalOrders').textContent = totalOrders;
+      document.getElementById('statTotalAmount').textContent = `$${totalAmount}`;
+
+      // 2. 餐點統計分布
+      const statsBreakdown = document.getElementById('statsBreakdown');
+      statsBreakdown.innerHTML = '';
+
+      const countMap = {};
+      MENU.forEach(m => countMap[m.name] = 0);
+      orders.forEach(o => {
+        if (countMap[o.mealName] !== undefined) countMap[o.mealName]++;
+      });
+
+      MENU.forEach(m => {
+        const count = countMap[m.name];
+        const pct = totalOrders > 0 ? Math.round((count / totalOrders) * 100) : 0;
+
+        const row = document.createElement('div');
+        row.className = 'bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs space-y-1.5';
+        row.innerHTML = `
+          <div class="flex justify-between font-medium">
+            <span class="text-slate-200">${m.icon} ${m.name}</span>
+            <span class="text-indigo-300 font-bold">${count} 份 (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+            <div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+          </div>
+        `;
+        statsBreakdown.appendChild(row);
+      });
+
+      // 3. 即時明細列表
+      const logList = document.getElementById('logList');
+      logList.innerHTML = '';
+
+      if (orders.length === 0) {
+        logList.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">目前尚無任何訂餐登記紀錄</p>`;
+        return;
+      }
+
+      // 依座號排序顯示
+      const sortedOrders = [...orders].sort((a, b) => a.seat - b.seat);
+
+      sortedOrders.forEach(o => {
+        const item = document.createElement('div');
+        item.className = 'bg-slate-900/70 p-2.5 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs hover:border-slate-700 transition-all';
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-lg bg-indigo-950 text-indigo-300 font-bold flex items-center justify-center border border-indigo-800/60">${o.seat}</span>
+            <div>
+              <div class="font-bold text-white">${o.mealName} <span class="text-amber-400 font-normal">($${o.price})</span></div>
+              <div class="text-[10px] text-slate-400">${o.timestamp} ${o.note ? `· 備註: ${o.note}` : ''}</div>
+            </div>
+          </div>
+          <button onclick="deleteOrder(${o.seat})" class="text-slate-500 hover:text-rose-400 p-1.5 transition-colors" title="刪除本筆紀錄">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        `;
+        logList.appendChild(item);
+      });
+    }
+
+    // JSON 匯出備份
+    function exportJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(orders, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `lunch_orders_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // JSON 匯入備份
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (Array.isArray(importedData)) {
+            orders = importedData;
+            saveOrdersToStorage();
+            renderUI();
+            alert('訂餐資料已成功匯入！');
+          } else {
+            alert('匯入失敗：格式不符合 JSON 陣列標準');
+          }
+        } catch (err) {
+          alert('解析 JSON 檔案時發生錯誤');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Tab 切換控制
+    function switchTab(tab) {
+      const orderTab = document.getElementById('orderTab');
+      const gameTab = document.getElementById('gameTab');
+      const btnOrder = document.getElementById('tabNavOrder');
+      const btnGame = document.getElementById('tabNavGame');
+
+      if (tab === 'order') {
+        orderTab.classList.remove('hidden');
+        gameTab.classList.add('hidden');
+        btnOrder.classList.add('active');
+        btnGame.classList.remove('active');
+      } else {
+        orderTab.classList.add('hidden');
+        gameTab.classList.remove('hidden');
+        btnGame.classList.add('active');
+        btnOrder.classList.remove('active');
+
+        // 自動觸發 Canvas 初始化與繪製
+        if (gameState === 'START') {
+          startGame();
+        }
+      }
+    }
+
+
+    /* =========================================================
+       2. NEON BREAKOUT 打磚塊遊戲 Engine (Web Audio API + Canvas)
+       ========================================================= */
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const VIRTUAL_WIDTH = 800;
+    const VIRTUAL_HEIGHT = 600;
+
+    // 遊戲狀態 state
+    let gameState = 'START'; // START, PLAYING, PAUSED, GAMEOVER
+    let score = 0;
+    let lives = 3;
+    let level = 1;
+    let highScore = localStorage.getItem('neon_breakout_highscore') || 0;
+    let soundMuted = false;
+
+    document.getElementById('highScoreVal').textContent = highScore;
+
+    // 底盤 Paddle
+    let paddle = {
+      width: 120,
+      height: 14,
+      x: VIRTUAL_WIDTH / 2 - 60,
+      y: VIRTUAL_HEIGHT - 35,
+      speed: 9,
+      targetX: VIRTUAL_WIDTH / 2 - 60
     };
-    reader.readAsText(file);
-    fileInput.value = '';
-  });
 
-  // 事件監聽綁定
-  addOrderBtn.addEventListener('click', handleAddOrder);
-  searchBtn.addEventListener('click', handleSearch);
+    // 球體 Balls
+    let balls = [];
 
-  // 初始化
-  initMenuUI();
-  updateUI();
-</script>
+    function createBall(x, y, dx, dy) {
+      return {
+        x: x || paddle.x + paddle.width / 2,
+        y: y || paddle.y - 12,
+        radius: 7,
+        dx: dx !== undefined ? dx : 4.5,
+        dy: dy !== undefined ? dy : -4.5
+      };
+    }
+
+    // 磚塊配置 Bricks
+    let bricks = [];
+    const brickRows = 5;
+    const brickCols = 8;
+    const brickPadding = 12;
+    const brickOffsetTop = 70;
+    const brickOffsetLeft = 50;
+    let brickWidth = (VIRTUAL_WIDTH - brickOffsetLeft * 2 - (brickCols - 1) * brickPadding) / brickCols;
+    const brickHeight = 22;
+
+    const brickThemes = [
+      { border: '#f43f5e', fill: 'rgba(244, 63, 94, 0.8)', points: 50 },
+      { border: '#fb923c', fill: 'rgba(251, 146, 60, 0.8)', points: 40 },
+      { border: '#facc15', fill: 'rgba(250, 204, 21, 0.8)', points: 30 },
+      { border: '#4ade80', fill: 'rgba(74, 222, 128, 0.8)', points: 20 },
+      { border: '#38bdf8', fill: 'rgba(56, 189, 248, 0.8)', points: 10 }
+    ];
+
+    // Power-up 強化道具
+    let powerUps = [];
+    const powerTypes = [
+      { type: 'width', color: '#38bdf8', label: 'W' },
+      { type: 'multiball', color: '#facc15', label: 'M' },
+      { type: 'life', color: '#f43f5e', label: '+' }
+    ];
+
+    // 粒子系統 Particles
+    let particles = [];
+
+    function spawnParticles(x, y, color) {
+      for (let i = 0; i < 10; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        particles.push({
+          x, y,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
+          radius: Math.random() * 2.5 + 1,
+          color,
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    // 控制項事件綁定 (Keyboard, Mouse, Touch)
+    let leftPressed = false;
+    let rightPressed = false;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') rightPressed = true;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') leftPressed = true;
+      if (e.key === 'p' || e.key === 'P') togglePauseGame();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') rightPressed = false;
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') leftPressed = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = VIRTUAL_WIDTH / rect.width;
+      paddle.targetX = (e.clientX - rect.left) * scaleX - paddle.width / 2;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = VIRTUAL_WIDTH / rect.width;
+      paddle.targetX = (e.touches[0].clientX - rect.left) * scaleX - paddle.width / 2;
+    });
+
+    // Web Audio API 內建音效
+    let audioCtx = null;
+
+    function playSynthSound(freq, duration, type = 'sine') {
+      if (soundMuted) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function toggleMute() {
+      soundMuted = !soundMuted;
+      const soundBtn = document.getElementById('soundBtn');
+      soundBtn.innerHTML = soundMuted ? '<i class="fa-solid fa-volume-xmark text-rose-400"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+    }
+
+    // 初始化磚塊矩陣
+    function initBricks() {
+      bricks = [];
+      for (let r = 0; r < brickRows; r++) {
+        bricks[r] = [];
+        for (let c = 0; c < brickCols; c++) {
+          bricks[r][c] = {
+            x: brickOffsetLeft + c * (brickWidth + brickPadding),
+            y: brickOffsetTop + r * (brickHeight + brickPadding),
+            status: 1,
+            theme: brickThemes[r % brickThemes.length],
+            hasPowerUp: Math.random() < 0.22
+          };
+        }
+      }
+    }
+
+    function startGame() {
+      score = 0;
+      lives = 3;
+      level = 1;
+      updateHUD();
+      resetStage();
+      gameState = 'PLAYING';
+      hideOverlay();
+    }
+
+    function restartGame() {
+      startGame();
+    }
+
+    function resetStage() {
+      paddle.width = 120;
+      paddle.x = VIRTUAL_WIDTH / 2 - paddle.width / 2;
+      balls = [createBall()];
+      powerUps = [];
+      particles = [];
+      initBricks();
+    }
+
+    function updateHUD() {
+      document.getElementById('scoreVal').textContent = score;
+      document.getElementById('levelVal').textContent = level;
+      document.getElementById('highScoreVal').textContent = highScore;
+
+      const livesVal = document.getElementById('livesVal');
+      livesVal.innerHTML = '';
+      for (let i = 0; i < lives; i++) {
+        livesVal.innerHTML += '<i class="fa-solid fa-heart"></i>';
+      }
+    }
+
+    function togglePauseGame() {
+      if (gameState === 'PLAYING') {
+        gameState = 'PAUSED';
+        showOverlay('pause');
+      } else if (gameState === 'PAUSED') {
+        gameState = 'PLAYING';
+        hideOverlay();
+      }
+    }
+
+    function openHelpModal() {
+      document.getElementById('helpModal').classList.remove('hidden');
+    }
+
+    function closeHelpModal() {
+      document.getElementById('helpModal').classList.add('hidden');
+    }
+
+    function showOverlay(type) {
+      const overlay = document.getElementById('gameOverlay');
+      const startC = document.getElementById('overlayStartContent');
+      const pauseC = document.getElementById('overlayPauseContent');
+      const overC = document.getElementById('overlayGameOverContent');
+
+      overlay.classList.remove('hidden');
+      startC.classList.add('hidden');
+      pauseC.classList.add('hidden');
+      overC.classList.add('hidden');
+
+      if (type === 'start') startC.classList.remove('hidden');
+      if (type === 'pause') pauseC.classList.remove('hidden');
+      if (type === 'gameover') {
+        overC.classList.remove('hidden');
+        document.getElementById('finalScore').textContent = score;
+      }
+    }
+
+    function hideOverlay() {
+      document.getElementById('gameOverlay').classList.add('hidden');
+    }
+
+    // 遊戲物理邏輯更新 Engine Loop
+    function updatePhysics() {
+      if (gameState !== 'PLAYING') return;
+
+      // 底盤移動邏輯
+      if (rightPressed) paddle.targetX += paddle.speed * 1.4;
+      if (leftPressed) paddle.targetX -= paddle.speed * 1.4;
+
+      if (paddle.targetX < 10) paddle.targetX = 10;
+      if (paddle.targetX > VIRTUAL_WIDTH - paddle.width - 10) paddle.targetX = VIRTUAL_WIDTH - paddle.width - 10;
+
+      paddle.x += (paddle.targetX - paddle.x) * 0.25;
+
+      // 彈球物理更新
+      for (let i = balls.length - 1; i >= 0; i--) {
+        let b = balls[i];
+        const speedMultiplier = 1 + (level - 1) * 0.08;
+        b.x += b.dx * speedMultiplier;
+        b.y += b.dy * speedMultiplier;
+
+        // 牆壁碰撞
+        if (b.x - b.radius < 0 || b.x + b.radius > VIRTUAL_WIDTH) {
+          b.dx = -b.dx;
+          playSynthSound(300, 0.05);
+        }
+        if (b.y - b.radius < 0) {
+          b.dy = -b.dy;
+          playSynthSound(350, 0.05);
+        }
+
+        // 底盤碰撞
+        if (
+          b.y + b.radius >= paddle.y &&
+          b.y - b.radius <= paddle.y + paddle.height &&
+          b.x >= paddle.x && b.x <= paddle.x + paddle.width
+        ) {
+          b.y = paddle.y - b.radius;
+          const hitPos = (b.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+          const angle = hitPos * (Math.PI / 3);
+          const speed = Math.sqrt(b.dx * b.dx + b.dy * b.dy);
+          
+          b.dx = speed * Math.sin(angle);
+          b.dy = -Math.abs(speed * Math.cos(angle));
+
+          playSynthSound(520, 0.08, 'triangle');
+          spawnParticles(b.x, b.y, '#38bdf8');
+        }
+
+        // 掉落底部觸發
+        if (b.y - b.radius > VIRTUAL_HEIGHT) {
+          balls.splice(i, 1);
+          if (balls.length === 0) {
+            lives--;
+            updateHUD();
+            playSynthSound(180, 0.3, 'sawtooth');
+
+            if (lives <= 0) {
+              gameState = 'GAMEOVER';
+              showOverlay('gameover');
+            } else {
+              balls.push(createBall());
+            }
+          }
+        }
+
+        // 磚塊碰撞判定
+        let allCleared = true;
+        for (let r = 0; r < brickRows; r++) {
+          for (let c = 0; c < brickCols; c++) {
+            let br = bricks[r][c];
+            if (br.status === 1) {
+              allCleared = false;
+              if (
+                b.x + b.radius > br.x &&
+                b.x - b.radius < br.x + brickWidth &&
+                b.y + b.radius > br.y &&
+                b.y - b.radius < br.y + brickHeight
+              ) {
+                b.dy = -b.dy;
+                br.status = 0;
+                score += br.theme.points;
+
+                if (score > highScore) {
+                  highScore = score;
+                  localStorage.setItem('neon_breakout_highscore', highScore);
+                }
+
+                updateHUD();
+                playSynthSound(600 + br.theme.points * 4, 0.1, 'square');
+                spawnParticles(br.x + brickWidth / 2, br.y + brickHeight / 2, br.theme.border);
+
+                // 觸發 Power-up 道具掉落
+                if (br.hasPowerUp) {
+                  const pType = powerTypes[Math.floor(Math.random() * powerTypes.length)];
+                  powerUps.push({
+                    x: br.x + brickWidth / 2,
+                    y: br.y + brickHeight / 2,
+                    dy: 2.2,
+                    config: pType
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        // 清空通關判定
+        if (allCleared) {
+          level++;
+          playSynthSound(880, 0.3, 'sine');
+          updateHUD();
+          resetStage();
+        }
+      }
+
+      // 道具掉落與拾取
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        let p = powerUps[i];
+        p.y += p.dy;
+
+        if (
+          p.x >= paddle.x && p.x <= paddle.x + paddle.width &&
+          p.y >= paddle.y && p.y <= paddle.y + paddle.height
+        ) {
+          playSynthSound(900, 0.15, 'sine');
+
+          if (p.config.type === 'width') {
+            paddle.width = Math.min(paddle.width + 30, 210);
+            setTimeout(() => { paddle.width = 120; }, 10000);
+          }
+          if (p.config.type === 'multiball' && balls.length > 0) {
+            balls.push(createBall(balls[0].x, balls[0].y, -balls[0].dx, balls[0].dy));
+          }
+          if (p.config.type === 'life') {
+            lives++;
+            updateHUD();
+          }
+
+          powerUps.splice(i, 1);
+        } else if (p.y > VIRTUAL_HEIGHT) {
+          powerUps.splice(i, 1);
+        }
+      }
+
+      // 粒子更新
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let pt = particles[i];
+        pt.x += pt.dx;
+        pt.y += pt.dy;
+        pt.alpha -= pt.decay;
+        if (pt.alpha <= 0) particles.splice(i, 1);
+      }
+    }
+
+    // Canvas 渲染畫布 Render Loop
+    function renderGame() {
+      ctx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+
+      // 繪製磚塊
+      for (let r = 0; r < brickRows; r++) {
+        for (let c = 0; c < brickCols; c++) {
+          let br = bricks[r][c];
+          if (br.status === 1) {
+            ctx.fillStyle = br.theme.fill;
+            ctx.strokeStyle = br.theme.border;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(br.x, br.y, brickWidth, brickHeight, 4);
+            ctx.fill();
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 繪製底盤 Paddle
+      ctx.fillStyle = '#6366f1';
+      ctx.strokeStyle = '#a5b4fc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(paddle.x, paddle.y, paddle.width, paddle.height, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      // 繪製球體 Balls
+      for (let b of balls) {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#f43f5e';
+        ctx.shadowColor = '#f43f5e';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      // 繪製 Power-ups
+      for (let p of powerUps) {
+        ctx.fillStyle = p.config.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.config.label, p.x, p.y);
+      }
+
+      // 繪製爆破粒子
+      for (let pt of particles) {
+        ctx.save();
+        ctx.globalAlpha = pt.alpha;
+        ctx.fillStyle = pt.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // 主動畫循環 Animation Main Loop
+    function gameLoop() {
+      updatePhysics();
+      renderGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 全域初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      initMenuUI();
+      renderUI();
+      initBricks();
+      requestAnimationFrame(gameLoop);
+    });
+  </script>
 </body>
 </html>
